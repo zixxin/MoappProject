@@ -1,1 +1,0 @@
-ps huH p <PID_OF_U_PROCESS> | wc -l
