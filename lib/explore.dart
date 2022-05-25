@@ -81,6 +81,39 @@ class ExploreScreenState extends State<ExploreScreen> {
                 ),
               ],
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 10.0, left: 20.0, bottom: 10.0),
+                  width: 170,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                      color: Color(0xFF98C9FF),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)) //모서리를 둥글게
+                  ),
+                  child: TextButton(
+                      child: const Text("방만들기", style: TextStyle(fontSize: 15, color: Colors.white)),
+                      onPressed: (){
+                        Get.to(() => const MakeRoomPage(title: ''));
+                      }),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 10.0, right: 20.0, bottom: 10.0),
+                  width: 170,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                      color: Color(0xFF98C9FF),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)) //모서리를 둥글게
+                  ),
+                  child: TextButton(
+                      child: const Text("방찾기", style: TextStyle(fontSize: 15, color: Colors.white)),
+                      onPressed: (){
+                        Get.to(() => const FindRoomPage(title: ''));
+                      }),
+                ),
+              ],
+            ),
             const Divider(
               thickness: 1.0,
             ),
@@ -100,16 +133,6 @@ class ExploreScreenState extends State<ExploreScreen> {
             const Divider(
               thickness: 1.0,
             ),
-            TextButton(
-                child: const Text("방만들기", style: TextStyle(fontSize: 30, color: Colors.red)),
-                onPressed: (){
-                  Get.to(() => const MakeRoomPage(title: ''));
-                }),
-            TextButton(
-                child: const Text("방찾기", style: TextStyle(fontSize: 30, color: Colors.red)),
-                onPressed: (){
-                  Get.to(() => const FindRoomPage(title: ''));
-                }),
           ],
         ),
       ),

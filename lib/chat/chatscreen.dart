@@ -196,7 +196,7 @@ Widget message() {
                 borderRadius:
                     const BorderRadius.all(Radius.circular(15)) //모서리를 둥글게
                 ),
-            margin: const EdgeInsets.only(left: 15.0, top: 330.0),
+            margin: const EdgeInsets.only(left: 15.0, top: 270.0),
             padding: const EdgeInsets.only(left: 20.0, right: 20.0),
             width: 300,
             height: 40,
@@ -216,7 +216,7 @@ Widget message() {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: const EdgeInsets.only(left: 5.0, top: 330.0),
+            margin: const EdgeInsets.only(left: 5.0, top: 270.0),
             child: IconButton(
               icon: const Icon(Icons.emoji_people_rounded),
               color: const Color(0xFF38597E),

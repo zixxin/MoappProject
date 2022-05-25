@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'mycar.dart';
+import 'package:get/get.dart';
 
 class MoreScreen extends StatefulWidget {
   const MoreScreen({Key? key, required this.title}) : super(key: key);
@@ -80,7 +82,9 @@ class MoreScreenState extends State<MoreScreen> {
               child: ListTile(
                 title: const Text('차랑 등록 여부', style: TextStyle(fontSize: 15)),
                 trailing: const Text('미등록', style: TextStyle(fontSize: 15, color: Colors.grey)),
-                onTap: () {},
+                onTap: () {
+                  Get.to(() => const MyCarScreen(title: ''));
+                },
               ),
             ),
             const Divider(
