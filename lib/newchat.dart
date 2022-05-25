@@ -33,18 +33,26 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         leading: IconButton(
           icon: new Icon(Icons.arrow_back_ios_new_rounded),
-          color: Colors.white,
+          color: Colors.black,
           onPressed: () {
             Navigator.pushNamed(context, '/chat',);
           },
         ),
-        title: const Text('대화방',
+        title: const Text('한동익명남',
             style: TextStyle(
-                color: Colors.white
+                color: Colors.black
             )
         ),
-        backgroundColor: const Color(0xFF38597E),
+        backgroundColor: Colors.white,
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.more_vert_rounded),
+            color: const Color(0xFF38597E),
+            iconSize: 28.0,
+            onPressed: () => {},
+          ),
+        ],
       ),
       backgroundColor: Colors.white,
       body: Column(children: <Widget>[
@@ -72,15 +80,19 @@ class _ChatPageState extends State<ChatPage> {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(5, 15, 10, 5),
                             child: Row(children: [
-                              Text((snapshot.data?.docs[index]['timestamp']).toString()),
+                              Container(
+                                margin: const EdgeInsets.only(top: 30.0, left: 5.0),
+                                child:Text((snapshot.data?.docs[index]['timestamp']).toString(),
+                                    style: TextStyle(color: Colors.grey, fontSize: 10.0)),
+                              ),
                               const SizedBox(width: 8),
                               Container(
                                 child: Padding(
                                   padding: const EdgeInsets.all(10),
-                                  child: Text(chats),
+                                  child: Text(chats, style: TextStyle(color: Colors.white)),
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.blue,
+                                  color: Color(0xFF38597E),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                               )
@@ -96,7 +108,7 @@ class _ChatPageState extends State<ChatPage> {
                             padding: const EdgeInsets.fromLTRB(5, 15, 10, 5),
                             child: Row(
                                 children: [
-                                  Text((snapshot.data?.docs[index]['name']).toString()),
+                                  //Text((snapshot.data?.docs[index]['name']).toString()),
                                   const SizedBox(width: 8),
                                   Container(
                                     child: Padding(
@@ -104,12 +116,16 @@ class _ChatPageState extends State<ChatPage> {
                                       child: Text((snapshot.data?.docs[index]['text']).toString()),
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.grey,
+                                      color: Colors.grey[300],
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  Text((snapshot.data?.docs[index]['timestamp']).toString()),
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 30.0, left: 5.0),
+                                    child:Text((snapshot.data?.docs[index]['timestamp']).toString(),
+                                        style: TextStyle(color: Colors.grey, fontSize: 10.0)),
+                                  ),
                                 ]
                             ),
                           ),
@@ -144,8 +160,8 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    icon: new Icon(Icons.arrow_upward),
-                    color: Colors.blue,
+                    icon: new Icon(Icons.emoji_people_rounded),
+                    color: Color(0xFF38597E),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         await addMessage(_controller.text);
