@@ -1,35 +1,23 @@
-name: team_project
-description: team_project.
+name: temp
+description: A new Flutter project.
 
 publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.14.0-178.1.beta <3.0.0"
+  sdk: ">=2.16.2 <3.0.0"
 
 dependencies:
-  firebase_core:
-  firebase_auth:
-  firebase_storage:
-  firebase_analytics:
-  cloud_firestore:
-  provider:
-  google_sign_in:
-  flutter_switch:
-  radio_grouped_buttons:
-  flutter_shapes:
-  speech_to_text:
-  permission_handler:
-  #agora_rtc_engine:
-  flutter_svg:
-  agora_rtm:
-  loader_overlay:
-
   flutter:
     sdk: flutter
-
+  firebase_core:
+  firebase_auth:
+  cloud_firestore:
+  firebase_storage:
+  google_sign_in:
   cupertino_icons: ^1.0.2
+  get: 4.6.1
 
 dev_dependencies:
   flutter_test:
@@ -37,37 +25,18 @@ dev_dependencies:
 
   flutter_lints: ^1.0.0
 
-flutter:
-  assets:
-    - assets/chat.png
-    - assets/icon.png
-    - assets/appicon.png
-    - assets/chatroom.png
-    - assets/search.png
-    - assets/logo.png
-    - assets/wait.png
-    - assets/group1.png
-    - assets/group2.png
-    - assets/group3.png
-    - assets/group4.png
-    - assets/fire.png
-    - assets/high_brightness.png
-    - assets/Mic.png
-    - assets/Iconography.png
-    - assets/MyIcon.png
-    - assets/EnterIcon.png
-    - assets/users.png
-    - assets/coolicon.png
-    - assets/back.png
-    - assets/check.png
-    - assets/up.png
-    - assets/wow.png
-    - assets/sad.png
-    - assets/smile.png
-    - assets/bad.png
-    - assets/wink.png
-    - assets/menu.png
-    - assets/plus.png
-    - assets/magnifier.png
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
 
+# The following section is specific to Flutter.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
   uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+  - img/alarm.png
+  - img/together_car.png
