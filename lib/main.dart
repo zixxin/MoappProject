@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'home.dart';
 import 'newchat.dart';
 import 'chat/chat.dart';
+import 'explore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/home' : (context) => const MainScreen(title: ''),
         '/chat' : (context) => const ChatScreen(title: ''),
         '/chating' : (context) => ChatPage(),
+        'explore' : (context) => const ExploreScreen(title: ''),
       },
       onGenerateRoute: _getRoute,
     );
