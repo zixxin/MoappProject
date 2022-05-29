@@ -16,17 +16,11 @@ class ExploreScreenState extends State<ExploreScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: new Icon(Icons.arrow_back_ios_new_rounded),
-          color: const Color(0xFF38597E),
-          onPressed: () {
-            //Navigator.pushNamed(context, '/home',);
-          },
-        ),
         title: const Text('HOME', style: TextStyle(color: Colors.white),),
         backgroundColor: const Color(0xFF38597E),
         elevation: 0.0,
         centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Column(
@@ -65,15 +59,7 @@ class ExploreScreenState extends State<ExploreScreen> {
                       child: const Text(
                         '한동익명남',
                         textAlign: TextAlign.start,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 5.0),
-                      child: const Text(
-                        '같이카 횟수 : 5회',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(fontSize: 15),
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Container(
