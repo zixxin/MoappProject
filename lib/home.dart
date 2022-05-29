@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:temp/newcarInfo.dart';
 import 'chat/chat.dart';
 import 'explore.dart';
 import 'mycar.dart';
