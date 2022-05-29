@@ -18,13 +18,7 @@ class ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: new Icon(Icons.arrow_back_ios_new_rounded),
-          color: Colors.white,
-          onPressed: () {
-            Navigator.pushNamed(context, '/home',);
-          },
-        ),
+        automaticallyImplyLeading: false,
         title: const Text('나와같이', style: TextStyle(color: Colors.white),),
         backgroundColor: const Color(0xFF38597E),
         elevation: 0.0,
