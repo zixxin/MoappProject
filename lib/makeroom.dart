@@ -1,292 +1,439 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'more.dart';
-import 'package:get/get.dart';
-import 'explore.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_switch/flutter_switch.dart';
+import 'package:radio_grouped_buttons/radio_grouped_buttons.dart';
+import 'package:flutter_shapes/flutter_shapes.dart';
 
-class MakeRoomPage extends StatefulWidget {
-  const MakeRoomPage({Key? key, required this.title}) : super(key: key);
-  final String title;
+import 'colors.dart';
 
-  @override
-  State<MakeRoomPage> createState() => _MakeRoomPageState();
+
+class MakeroomPage extends StatefulWidget {
+  MakeroomPageState createState() => MakeroomPageState();
 }
 
-class _MakeRoomPageState extends State<MakeRoomPage> {
-  TextEditingController splace = TextEditingController();
-  TextEditingController fplace = TextEditingController();
-  String pnselectedValue = '2';
-  String scselectedValue1 = '14';
-  String smselectedValue1 = '30';
-  bool car = true;
-  bool taxi = false;
+class MakeroomPageState extends State<MakeroomPage > {
+  final _formKey = GlobalKey<FormState>(debugLabel: '_GuestBookState');
+  final _titlecontroller = TextEditingController();
+  final _maxnumcontroller = TextEditingController();
+  final _maxseccontroller = TextEditingController();
+  final _interceptcontroller = TextEditingController();
+  final _hashtagcontroller = TextEditingController();
+  final int _maxsec = 99999;
+  late int _maxnum = 2;
+  late int _category;
+  bool interceptStatus = false;
+  bool timeStatus = false;
+  List<String> buttonList=["상담","면접","토론","만남","스터디","수다"];
+  Shapes shapes = Shapes(radius: 50, center: Offset.zero, angle: 0);
 
   @override
   Widget build(BuildContext context) {
-    final Size displaysize = MediaQuery
-        .of(context)
-        .size;
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('방만들기', style: TextStyle(color: Colors.white),),
-        backgroundColor: const Color(0xFF38597E),
-        elevation: 0.0,
-        centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          iconSize: 25.0,
+          icon: new Icon(Icons.close),
+          color: OnBackground,
           onPressed: () {
-            Get.back();
+            Navigator.pop(context);
           },
         ),
-        actions: <Widget>[
-          TextButton(
-              child: const Text(
-                  "완료", style: TextStyle(fontSize: 18, color: Colors.white)),
-              onPressed: () {
-                Get.back();
-              }),
-        ],
-      ),
-      body: SafeArea(
-        child: Center(
-          child: ListView(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 20.0, left: 20.0),
-                child: const Text('탑승 차량', style: TextStyle(fontSize: 15.0)),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                    margin: const EdgeInsets.only(top: 20.0),
-                    width: 170,
-                    height: 40,
-                    decoration: BoxDecoration(
-                        color: car ? const Color(0xFF98C9FF) : const Color(
-                            0xFFF0EEEE),
-                        borderRadius: const BorderRadius.all(
-                            Radius.circular(10)) //모서리를 둥글게
-                    ),
-                    child: TextButton(
-                        child: const Text(
-                            "카풀", style: TextStyle(fontSize: 15, color: Colors
-                            .black)),
-                        onPressed: () {
-                          setState(() {
-                            car = true;
-                            taxi = false;
-                          });
-                        }),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    margin: const EdgeInsets.only(top: 20.0),
-                    width: 170,
-                    height: 40,
-                    decoration: BoxDecoration(
-                        color: taxi ? const Color(0xFF98C9FF) : const Color(
-                            0xFFF0EEEE),
-                        borderRadius: const BorderRadius.all(
-                            Radius.circular(10)) //모서리를 둥글게
-                    ),
-                    child: TextButton(
-                        child: const Text(
-                            "택시", style: TextStyle(fontSize: 15, color: Colors
-                            .black)),
-                        onPressed: () {
-                          setState(() {
-                            car = false;
-                            taxi = true;
-                          });
-                        }),
-                  ),
-                ],
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 30.0, left: 20.0),
-                child: const Text('출발지', style: TextStyle(fontSize: 15.0)),
-              ),
-              Container(
-                margin: const EdgeInsets.only(
-                    top: 5.0, left: 20.0, right: 20.0),
-                child: TextField(
-                  controller: splace,
-                  decoration: const InputDecoration(
-                    hintText: '출발 장소를 입력해주세요.',
-                  ),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 30.0, left: 20.0),
-                child: const Text('도착지', style: TextStyle(fontSize: 15.0)),
-              ),
-              Container(
-                margin: const EdgeInsets.only(
-                    top: 5.0, left: 20.0, right: 20.0),
-                child: TextField(
-                  controller: fplace,
-                  decoration: const InputDecoration(
-                    hintText: '도착 장소를 입력해주세요.',
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.only(top: 30.0, left: 20.0),
-                    child: const Text(
-                        '탑승 가능 인원', style: TextStyle(fontSize: 15.0)),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                        color: Color(0xFFF0EEEE),
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(10)) //모서리를 둥글게
-                    ),
-                    margin: const EdgeInsets.only(top: 30.0, left: 20.0),
-                    padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                    child: DropdownButton<String>(
-                      iconSize: 30.0,
-                      value: pnselectedValue,
-                      icon: const Icon(Icons.arrow_drop_down),
-                      elevation: 16,
-                      style: const TextStyle(color: Colors.black),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          pnselectedValue = newValue!;
-                        });
-                      },
-                      items: <String>['1', '2', '3', '4', '5']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  Container(
-                      margin: const EdgeInsets.only(top: 30.0, left: 10.0),
-                      child: const Text('명')
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.only(top: 30.0, left: 20.0),
-                    child: const Text(
-                        '출발 시간', style: TextStyle(fontSize: 15.0)),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                        color: Color(0xFFF0EEEE),
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(10)) //모서리를 둥글게
-                    ),
-                    margin: const EdgeInsets.only(top: 30.0, left: 20.0),
-                    padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                    child: DropdownButton<String>(
-                      iconSize: 30.0,
-                      value: scselectedValue1,
-                      icon: const Icon(Icons.arrow_drop_down),
-                      elevation: 16,
-                      style: const TextStyle(color: Colors.black),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          scselectedValue1 = newValue!;
-                        });
-                      },
-                      items: <String>[
-                        '07',
-                        '08',
-                        '09',
-                        '10',
-                        '11',
-                        '12',
-                        '13',
-                        '14',
-                        '15',
-                        '16',
-                        '17',
-                        '18',
-                        '19',
-                        '20',
-                        '21',
-                        '22',
-                        '23'
-                      ]
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  Container(
-                      margin: const EdgeInsets.only(top: 30.0, left: 10.0),
-                      child: const Text('시')
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                        color: Color(0xFFF0EEEE),
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(10)) //모서리를 둥글게
-                    ),
-                    margin: const EdgeInsets.only(top: 30.0, left: 20.0),
-                    padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                    child: DropdownButton<String>(
-                      iconSize: 30.0,
-                      value: smselectedValue1,
-                      icon: const Icon(Icons.arrow_drop_down),
-                      elevation: 16,
-                      style: const TextStyle(color: Colors.black),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          smselectedValue1 = newValue!;
-                        });
-                      },
-                      items: <String>[
-                        '00',
-                        '05',
-                        '10',
-                        '15',
-                        '20',
-                        '25',
-                        '30',
-                        '35',
-                        '40',
-                        '45',
-                        '50',
-                        '55'
-                      ]
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  Container(
-                      margin: const EdgeInsets.only(top: 30.0, left: 10.0),
-                      child: const Text('분')
-                  ),
-                ],
-              ),
-            ],
-          ),
+        title: const Text('방 만들기',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: OnBackground,
+              fontSize: 26,
+            )
         ),
+        actions: <Widget>[
+          new TextButton(
+            style: TextButton.styleFrom(
+              primary: OnBackground,
+              textStyle: const TextStyle(fontSize: 15),
+            ),
+            onPressed: () async {
+              //print(_selectedbutton);
+              if (_formKey.currentState!.validate()) {
+                await addRoom(
+                    _titlecontroller.text,
+                    _maxnum,
+                    int.parse(_maxseccontroller.text),
+                    interceptStatus,
+                    timeStatus,
+                    await _Category(_category),
+                    _hashtagcontroller.text
+                );
+                _titlecontroller.clear();
+                _maxnumcontroller.clear();
+                _maxseccontroller.clear();
+                _interceptcontroller.clear();
+                _hashtagcontroller.clear();
+                Navigator.pushNamed(context, '/wait',);
+              }
+            },
+            child: Text(
+              '완료',
+              style: TextStyle(
+                color: TextWeak,
+                fontSize: 18,
+              ),
+            ),
+          ),
+        ],
+        backgroundColor: Bar,
+        centerTitle: true,
+      ),
+      body: Container(
+          padding: const EdgeInsets.all(22.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Container(
+                  alignment: Alignment.topLeft,
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    '방 이름',
+                    style: TextStyle(
+                      color: TextSmall,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _titlecontroller,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(33.0)),
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(33.0)),
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          fillColor: SubPrimary,
+                          filled: true,
+                          //hintText: '방 이름',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '방 이름을 다시 입력해주세요';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 18),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          '카테고리',
+                          style: TextStyle(
+                            color: TextSmall,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 150,
+                          child: CustomRadioButton(
+                            buttonLables: buttonList,
+                            buttonValues: buttonList,
+                            buttonHeight: 36.81,
+                            fontSize: 18,
+                            //customShape: ,
+                            buttonBorderColor: TextWeak,
+                            textColor: TextSmall,
+                            radioButtonValue: (value,index){
+                              setState(() {
+                                _category = index as int;
+                              });
+                              //print("Button value "+value.toString());
+                              //print("Integer value "+index.toString());
+                            },
+                            horizontal: true,
+                            enableShape: true,
+                            //buttonSpace: 5,
+                            buttonColor: Colors.white,
+                            selectedColor: Primary,
+                            buttonWidth: 150,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          '최대 인원',
+                          style: TextStyle(
+                            color: TextSmall,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            alignment: Alignment.topLeft,
+                            height: 37,
+                            width: 74,
+                            padding: const EdgeInsets.only(top: 10,left: 15, bottom: 8, right: 10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: SubPrimary,
+                            ),
+                            child: Theme(
+                              data: Theme.of(context).copyWith(
+                                canvasColor: SubPrimary,
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  value: _maxnum,
+                                  dropdownColor: SubPrimary,
+                                  underline: Container(
+                                    height: 2,
+                                    color: Colors.deepPurpleAccent,
+                                  ),
+                                  items: <DropdownMenuItem<int>>[
+                                    new DropdownMenuItem(
+                                      child: new Text('2'),
+                                      value: 2,
+                                    ),
+                                    new DropdownMenuItem(
+                                      child: new Text('3'),
+                                      value: 3,
+                                    ),
+                                    new DropdownMenuItem(
+                                      child: new Text('4'),
+                                      value: 4,
+                                  ),
+                                ],
+                                onChanged: (int? value) {
+                                  setState(() {
+                                    if(value != null)
+                                      _maxnum = value;
+                                  });
+                                },
+                              ),
+                            )
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Text(
+                              '명',
+                              style: TextStyle(
+                                color: TextSmall,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 18),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          '중간 참여',
+                          style: TextStyle(
+                            color: TextWeak,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            alignment: Alignment.topLeft,
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: FlutterSwitch(
+                              activeColor: SubPrimary,
+                              activeTextColor: OnPrimary,
+                              activeToggleColor: Primary,
+                              activeTextFontWeight: FontWeight.w400,
+                              inactiveColor: ChatBackground,
+                              inactiveTextColor: TextWeak,
+                              inactiveToggleColor: TextWeak,
+                              inactiveTextFontWeight: FontWeight.w400,
+                              width: 109.3,
+                              height: 38.97,
+                              valueFontSize: 20.0,
+                              toggleSize: 33.0,
+                              value: interceptStatus,
+                              borderRadius: 33.0,
+                              showOnOff: true,
+                              onToggle: (val) {
+                                setState(() {
+                                  interceptStatus = val;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 18),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          '타이머',
+                          style: TextStyle(
+                            color: TextWeak,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: FlutterSwitch(
+                              activeColor: SubPrimary,
+                              activeTextColor: OnPrimary,
+                              activeToggleColor: Primary,
+                              activeTextFontWeight: FontWeight.w400,
+                              inactiveColor: ChatBackground,
+                              inactiveTextColor: TextWeak,
+                              inactiveToggleColor: TextWeak,
+                              inactiveTextFontWeight: FontWeight.w400,
+                              width: 109.3,
+                              height: 38.97,
+                              valueFontSize: 20.0,
+                              toggleSize: 33.0,
+                              value: timeStatus,
+                              borderRadius: 33.0,
+                              showOnOff: true,
+                              onToggle: (val) {
+                                setState(() {
+                                  timeStatus = val;
+                                });
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Container(
+                            width: 76,
+                            height: 38,
+                            //padding: const EdgeInsets.only(bottom: 8),
+                            child: TextFormField(
+                              controller: _maxseccontroller,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(33.0)),
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(33.0)),
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                fillColor: SubPrimary,
+                                filled: true,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Text(
+                              '초',
+                              style: TextStyle(
+                                color: TextSmall,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 18),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          '방을 소개해주세요',
+                          style: TextStyle(
+                            color: TextWeak,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      TextFormField(
+                        controller: _hashtagcontroller,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(33.0)),
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(33.0)),
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          fillColor: SubPrimary,
+                          filled: true,
+                          hintText: '#해시태그로 대화방을 소개해보세요.',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '해시태그을 다시 입력해주세요';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
       ),
     );
+  }
+
+  Future addRoom(String title, int maxnum, int maxsec, bool intercept, bool timer, String category, String hashtag) async {
+    await FirebaseFirestore.instance.collection("rooms").add({
+      "title": title,
+      "maxnum": maxnum,
+      'maxsec': maxsec,
+      "timer" : timer,
+      "intercept": intercept,
+      "category": category,
+      "hashtag": hashtag,
+      "nownum": 1,
+      'ready': 0,
+      "token": "",
+      //'timestamp': DateTime.now().millisecondsSinceEpoch,
+      //'name': FirebaseAuth.instance.currentUser!.displayName,
+      //'userId': FirebaseAuth.instance.currentUser!.uid,
+      //'email': FirebaseAuth.instance.currentUser!.email,
+    });
+  }
+  Future<String> _Category(int index) async {
+    String categorytext ="";
+    if(index == 0){
+      categorytext = "상담";
+    }
+    else if(index == 1){
+      categorytext = "면접";
+    }
+    else if(index == 2){
+      categorytext = "토론";
+    }
+    else if(index == 3){
+      categorytext = "만남";
+    }
+    else if(index == 4){
+      categorytext= "스터디";
+    }
+    else if(index == 5){
+      categorytext = "수다";
+    }
+    return categorytext;
   }
 }
