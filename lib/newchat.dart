@@ -84,17 +84,21 @@ class _ChatPageState extends State<ChatPage> {
                               Container(
                                 margin: const EdgeInsets.only(top: 30.0, left: 5.0),
                                 child:Text((snapshot.data?.docs[index]['timestamp']).toString(),
-                                    style: TextStyle(color: Colors.grey, fontSize: 10.0)),
+                                    style: const TextStyle(color: Colors.grey, fontSize: 10.0)),
                               ),
                               const SizedBox(width: 8),
                               Container(
+                                margin: const EdgeInsets.only(right: 5.0),
                                 child: Padding(
                                   padding: const EdgeInsets.all(10),
-                                  child: Text(chats, style: TextStyle(color: Colors.white)),
+                                  child: Text(chats, style: const TextStyle(color: Colors.white)),
                                 ),
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: Color(0xFF38597E),
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                      bottomLeft: Radius.circular(20)),
                                 ),
                               )
                             ]),
@@ -112,13 +116,17 @@ class _ChatPageState extends State<ChatPage> {
                                   //Text((snapshot.data?.docs[index]['name']).toString()),
                                   const SizedBox(width: 8),
                                   Container(
+                                    margin: const EdgeInsets.only(left: 5.0),
                                     child: Padding(
                                       padding: const EdgeInsets.all(10),
                                       child: Text((snapshot.data?.docs[index]['text']).toString()),
                                     ),
                                     decoration: BoxDecoration(
                                       color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(16),
+                                      borderRadius: const BorderRadius.only(
+                                          topRight: Radius.circular(20),
+                                          topLeft: Radius.circular(20),
+                                          bottomRight: Radius.circular(20)),
                                     ),
                                   ),
                                   const SizedBox(width: 8),

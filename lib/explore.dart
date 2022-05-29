@@ -59,15 +59,7 @@ class ExploreScreenState extends State<ExploreScreen> {
                       child: const Text(
                         '한동익명남',
                         textAlign: TextAlign.start,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 5.0),
-                      child: const Text(
-                        '같이카 횟수 : 5회',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(fontSize: 15),
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Container(
