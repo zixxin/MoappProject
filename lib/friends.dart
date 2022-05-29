@@ -63,7 +63,7 @@ class _FriendsPageState extends State<FriendsPage> {
                           Container(
                             margin: const EdgeInsets.only(top: 10.0),
                             child: const Text(
-                              '한동익명남',
+                              '한동익명녀',
                               textAlign: TextAlign.start,
                               style: TextStyle(fontSize: 15),
                             ),

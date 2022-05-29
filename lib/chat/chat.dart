@@ -71,7 +71,7 @@ class ChatScreenState extends State<ChatScreen> {
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
                 margin: const EdgeInsets.only(top: 10.0),
-                child: const Text('한동익명남', style: TextStyle(fontSize: 13.0)),
+                child: const Text('한동익명녀', style: TextStyle(fontSize: 13.0)),
               ),
               Container(
                 margin: const EdgeInsets.only(top: 5.0),

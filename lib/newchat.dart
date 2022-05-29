@@ -39,7 +39,7 @@ class _ChatPageState extends State<ChatPage> {
             Navigator.pushNamed(context, '/chat',);
           },
         ),
-        title: const Text('한동익명남',
+        title: const Text('한동익명녀',
             style: TextStyle(
                 color: Colors.black
             )
@@ -113,7 +113,6 @@ class _ChatPageState extends State<ChatPage> {
                             padding: const EdgeInsets.fromLTRB(5, 15, 10, 5),
                             child: Row(
                                 children: [
-                                  //Text((snapshot.data?.docs[index]['name']).toString()),
                                   const SizedBox(width: 8),
                                   Container(
                                     margin: const EdgeInsets.only(left: 5.0),
@@ -147,17 +146,21 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(25.0),
+            padding: const EdgeInsets.only(left: 25.0, right: 15.0, bottom: 10.0),
             child: Form(
               key: _formKey,
               child: Row(
                 children: [
                   Expanded(
                     child: TextFormField(
+                      cursorColor: const Color(0xFF38597E),
                       controller: _controller,
                       decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
                         fillColor: Colors.white,
                         hintText: '메세지를 입력하세요',
+                        hintStyle: TextStyle(color: Colors.grey, fontSize: 15.0),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
