@@ -10,6 +10,7 @@ String uid_google = "";
 String name_user= "";
 String email_user = "";
 String url_user = "";
+String user_login = "";
 String hashtag = "";
 
 Future<UserCredential> signInWithAnonynous() async {

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:get/get.dart';
 import 'login.dart';
 
 bool isEdit = false;
@@ -31,14 +32,15 @@ class _ChatPageState extends State<ChatPage> {
 
     return Scaffold(
       appBar: AppBar(
+        elevation: 0.0,
         leading: IconButton(
-          icon: new Icon(Icons.arrow_back_ios_new_rounded),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
           color: Colors.black,
           onPressed: () {
-            Navigator.pushNamed(context, '/chat',);
+            Get.back();
           },
         ),
-        title: const Text('한동익명남',
+        title: const Text('한동익명녀',
             style: TextStyle(
                 color: Colors.black
             )
@@ -83,17 +85,21 @@ class _ChatPageState extends State<ChatPage> {
                               Container(
                                 margin: const EdgeInsets.only(top: 30.0, left: 5.0),
                                 child:Text((snapshot.data?.docs[index]['timestamp']).toString(),
-                                    style: TextStyle(color: Colors.grey, fontSize: 10.0)),
+                                    style: const TextStyle(color: Colors.grey, fontSize: 10.0)),
                               ),
                               const SizedBox(width: 8),
                               Container(
+                                margin: const EdgeInsets.only(right: 5.0),
                                 child: Padding(
                                   padding: const EdgeInsets.all(10),
-                                  child: Text(chats, style: TextStyle(color: Colors.white)),
+                                  child: Text(chats, style: const TextStyle(color: Colors.white)),
                                 ),
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: Color(0xFF38597E),
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                      bottomLeft: Radius.circular(20)),
                                 ),
                               )
                             ]),
@@ -108,16 +114,19 @@ class _ChatPageState extends State<ChatPage> {
                             padding: const EdgeInsets.fromLTRB(5, 15, 10, 5),
                             child: Row(
                                 children: [
-                                  //Text((snapshot.data?.docs[index]['name']).toString()),
                                   const SizedBox(width: 8),
                                   Container(
+                                    margin: const EdgeInsets.only(left: 5.0),
                                     child: Padding(
                                       padding: const EdgeInsets.all(10),
                                       child: Text((snapshot.data?.docs[index]['text']).toString()),
                                     ),
                                     decoration: BoxDecoration(
                                       color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(16),
+                                      borderRadius: const BorderRadius.only(
+                                          topRight: Radius.circular(20),
+                                          topLeft: Radius.circular(20),
+                                          bottomRight: Radius.circular(20)),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
@@ -138,17 +147,21 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(25.0),
+            padding: const EdgeInsets.only(left: 25.0, right: 15.0, bottom: 10.0),
             child: Form(
               key: _formKey,
               child: Row(
                 children: [
                   Expanded(
                     child: TextFormField(
+                      cursorColor: const Color(0xFF38597E),
                       controller: _controller,
                       decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
                         fillColor: Colors.white,
                         hintText: '메세지를 입력하세요',
+                        hintStyle: TextStyle(color: Colors.grey, fontSize: 15.0),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {

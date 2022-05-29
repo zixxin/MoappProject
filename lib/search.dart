@@ -34,7 +34,35 @@ class _SearchPageState extends State<SearchPage> {
       body: SafeArea(
         child: Center(
           child: ListView(
-            children: const [
+            children: [
+              DataTable(
+                columnSpacing: 45.0,
+                columns: const [
+                  DataColumn(label: Text('출발지')),
+                  DataColumn(label: Text('목적지')),
+                  DataColumn(label: Text('출발시간')),
+                  DataColumn(label: Text('더보기')),
+                ],
+                rows: [
+                  DataRow(
+                      cells: [
+                        const DataCell(Text('taxi stop')),
+                        const DataCell(Text('pohang univ')),
+                        const DataCell(Text('13:30')),
+                        DataCell(Container(
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(width: 1.0, color: Color(0xFF38597E)),
+                            ),
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/chating',);
+                            },
+                            child: const Text("채팅", style: TextStyle(color: Color(0xFF38597E))),
+                          ),),),
+                      ]
+                  ),
+                ],
+              ),
             ],
           ),
         ),
