@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'more.dart';
 import 'package:get/get.dart';
 import 'explore.dart';
+import 'newchat.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({Key? key, required this.title}) : super(key: key);
@@ -81,6 +82,7 @@ class _FriendsPageState extends State<FriendsPage> {
                       side: const BorderSide(width: 1.0, color: Color(0xFF38597E)),
                     ),
                     onPressed: () {
+                      Navigator.pushNamed(context, '/chating',);
                     },
                     child: const Text("채팅", style: TextStyle(color: Color(0xFF38597E))),
                   ),

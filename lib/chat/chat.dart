@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'chatscreen.dart';
 import 'package:temp/friends.dart';
+import 'package:temp/newchat.dart';
+import 'package:temp/main.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, required this.title}) : super(key: key);
@@ -16,6 +18,13 @@ class ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: new Icon(Icons.arrow_back_ios_new_rounded),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pushNamed(context, '/home',);
+          },
+        ),
         title: const Text('나와같이', style: TextStyle(color: Colors.white),),
         backgroundColor: const Color(0xFF38597E),
         elevation: 0.0,
@@ -73,7 +82,8 @@ class ChatScreenState extends State<ChatScreen> {
           ],
         ),
                 onTap: () {
-                  Get.to(const ChattingScreen(title: ''));
+                  Navigator.pushNamed(context, '/chating',);
+                  //Get.to(const ChattingScreen(title: ''));
                 },
               ),
             ),

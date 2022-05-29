@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'home.dart';
+import 'login.dart';
 import 'package:get/get.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -16,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Timer(
       const Duration(seconds: 3),
-      () => Get.off(() => const MainScreen(title: '')),
+      () => Get.off(() => const LoginPage()),
     );
   }
 

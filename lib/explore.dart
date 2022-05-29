@@ -20,6 +20,7 @@ class ExploreScreenState extends State<ExploreScreen> {
         backgroundColor: const Color(0xFF38597E),
         elevation: 0.0,
         centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Column(

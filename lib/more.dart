@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'mycar.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'login.dart';
+import 'main.dart';
 
 class MoreScreen extends StatefulWidget {
   const MoreScreen({Key? key, required this.title}) : super(key: key);
@@ -11,6 +14,7 @@ class MoreScreen extends StatefulWidget {
 }
 
 class MoreScreenState extends State<MoreScreen> {
+  final _formKey = GlobalKey<FormState>(debugLabel: '_GuestBookState');
   @override
   Widget build(BuildContext context) {
     final Size displaysize = MediaQuery.of(context).size;
@@ -113,7 +117,8 @@ class MoreScreenState extends State<MoreScreen> {
                 title: const Text('로그아웃', style: TextStyle(fontSize: 15, color: Color(0xFFC95555))),
                 trailing: const Icon(Icons.arrow_forward_ios_rounded, color: Color(0xFFC95555)),
                 onTap: () {
-                  // FirebaseAuth.instance.signOut,
+                  signOut();
+                  Navigator.pushNamed(context, '/login',);
                 },
               ),
             ),
@@ -130,6 +135,15 @@ class MoreScreenState extends State<MoreScreen> {
         ),
       ),
     );
+  }
+  Future signOut() async {
+    final FirebaseAuth auth = await FirebaseAuth.instance;
+    await auth.signOut();
+    uid = "";
+    uid_google = "";
+    name_user = "";
+    email_user = "";
+    url_user = "";
   }
 }
 
