@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:get/get.dart';
 import 'login.dart';
 
 bool isEdit = false;
@@ -36,7 +37,7 @@ class _ChatPageState extends State<ChatPage> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           color: Colors.black,
           onPressed: () {
-            Navigator.pushNamed(context, '/chat',);
+            Get.back();
           },
         ),
         title: const Text('한동익명녀',

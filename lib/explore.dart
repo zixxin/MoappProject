@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'login.dart';
 import 'makeroom.dart';
 import 'package:get/get.dart';
 import 'findroom.dart';
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'newchat.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({Key? key, required this.title}) : super(key: key);
@@ -14,6 +19,8 @@ class ExploreScreen extends StatefulWidget {
 class ExploreScreenState extends State<ExploreScreen> {
   @override
   Widget build(BuildContext context) {
+    final fb = FirebaseFirestore.instance;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('HOME', style: TextStyle(color: Colors.white),),
@@ -112,9 +119,38 @@ class ExploreScreenState extends State<ExploreScreen> {
             ),
             Container(
               alignment: Alignment.topLeft,
-              margin: const EdgeInsets.only(top: 10.0, left: 20.0, bottom: 20.0),
+              margin: const EdgeInsets.only(top: 10.0, left: 20.0),
               child: const Text('근처 곧 마감되는 카풀', style: TextStyle(fontSize: 15.0)),
             ),
+        DataTable(
+            columnSpacing: 45.0,
+            columns: const [
+              DataColumn(label: Text('출발지')),
+              DataColumn(label: Text('목적지')),
+              DataColumn(label: Text('출발시간')),
+              DataColumn(label: Text('더보기')),
+            ],
+            rows: [
+              DataRow(
+                  cells: [
+                    const DataCell(Text('taxi stop')),
+                    const DataCell(Text('pohang univ')),
+                    const DataCell(Text('13:30')),
+                    DataCell(Container(
+                      child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(width: 1.0, color: Color(0xFF38597E)),
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/chating',);
+                      },
+                      child: const Text("채팅", style: TextStyle(color: Color(0xFF38597E))),
+                    ),),),
+                  ]
+              ),
+            ],
+        ),
+            const SizedBox(height: 10.0),
             const Divider(
               thickness: 1.0,
             ),
