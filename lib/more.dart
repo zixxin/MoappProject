@@ -97,9 +97,8 @@ class MoreScreenState extends State<MoreScreen> {
             Container(
               child: ListTile(
                 title: const Text('차랑 등록 여부', style: TextStyle(fontSize: 15)),
-                trailing: const Text('미등록', style: TextStyle(fontSize: 15, color: Colors.grey)),
+                trailing: const Text('등록', style: TextStyle(fontSize: 15, color: Colors.grey)),
                 onTap: () {
-                  Get.to(() => const MyCarScreen(title: ''));
                 },
               ),
             ),
