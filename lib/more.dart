@@ -1,7 +1,12 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'mycar.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'login.dart';
 import 'main.dart';
 
@@ -15,6 +20,13 @@ class MoreScreen extends StatefulWidget {
 
 class MoreScreenState extends State<MoreScreen> {
   final _formKey = GlobalKey<FormState>(debugLabel: '_GuestBookState');
+  File? _image ;
+  var _user;
+  String imgData = "";
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+  String _profileImageURL = "";
+
   @override
   Widget build(BuildContext context) {
     final Size displaysize = MediaQuery.of(context).size;
@@ -45,17 +57,17 @@ class MoreScreenState extends State<MoreScreen> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text('내 정보',
+                  children: [
+                    const Text('내 정보',
                         textAlign: TextAlign.start,
                         style: TextStyle(
                             fontSize: 15,
                             color: Colors.grey)),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Text(
-                      '한동익명남',
+                      name_user,
                       textAlign: TextAlign.start,
-                      style: TextStyle(fontSize: 15),
+                      style: const TextStyle(fontSize: 15),
                     ),
                   ],
                 ),
@@ -144,6 +156,55 @@ class MoreScreenState extends State<MoreScreen> {
     name_user = "";
     email_user = "";
     url_user = "";
+  }
+
+  void _prepareService() async {
+    _user = FirebaseAuth.instance.currentUser!;
+    if(_user == null) {
+      print("No login!");
+      return;
+    }
+  }
+
+  Future<String> storeImage() async {
+    _user = await _firebaseAuth.currentUser!;
+    final response = await _firebaseStorage
+        .ref().child("profile/${_user.uid}").getDownloadURL();
+
+    return response ;
+  }
+
+  Future addImage(final url) async {
+    final findData = await FirebaseFirestore.instance
+        .collection("profile").doc(_firebaseAuth.currentUser!.uid).delete();
+
+    await FirebaseFirestore.instance.collection("profile")
+        .doc(_firebaseAuth.currentUser!.uid).set({
+      'imageURL': url,
+      'name': FirebaseAuth.instance.currentUser!.displayName,
+      'userId': FirebaseAuth.instance.currentUser!.uid,
+      'email': FirebaseAuth.instance.currentUser!.email,
+    });
+  }
+
+  Future<void> _uploadImageToStorage(ImageSource source) async {
+    final _picker = ImagePicker();
+    final image = await ImagePicker.platform.getImage(source: source);
+    //ImagePicker.platform.getImage(source: source);
+
+    if (image == null) return;
+    setState(() {
+      _image = File(image.path);
+      print(_image);
+    });
+
+    final storageReference =
+    _firebaseStorage.ref().child("profile/${_user.uid}");
+
+    final storageUploadTask = await storageReference.putFile(_image!);
+
+    final response = await storeImage();
+    await addImage(response);
   }
 }
 
