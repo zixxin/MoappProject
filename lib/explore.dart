@@ -4,7 +4,9 @@ import 'login.dart';
 import 'makeroom.dart';
 import 'findroom.dart';
 import 'search.dart';
+import 'locations.dart' as locations;
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +24,16 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class ExploreScreenState extends State<ExploreScreen> {
+  final Map<String, Marker> _markers = {};
+  
+  late GoogleMapController mapController;
+  final LatLng _center = const LatLng(45.521563, -122.677433);
 
-  File? _image ;
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  File? _image;
   var _user;
   String imgData = "";
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -68,7 +78,6 @@ class ExploreScreenState extends State<ExploreScreen> {
                   ],
                 );
               }
-
               if(snapshot.hasError) {
                 print(snapshot.data) ;
                 return Column(
@@ -85,7 +94,6 @@ class ExploreScreenState extends State<ExploreScreen> {
                   ],
                 ) ;
               }
-
               if(snapshot.hasData) {
                 for(final urlImg in snapshot.data!.docs) {
                   if(urlImg["userId"] == _firebaseAuth.currentUser!.uid) {
@@ -266,6 +274,17 @@ class ExploreScreenState extends State<ExploreScreen> {
                     margin: const EdgeInsets.only(top: 10.0, left: 20.0, bottom: 20.0),
                     child: const Text('근처 카풀 지도 보기', style: TextStyle(fontSize: 15.0)),
                   ),
+                  Container(
+                    width: 350.0,
+                    height: 200.0,
+                    child: GoogleMap(
+                      onMapCreated: _onMapCreated,
+                      initialCameraPosition: CameraPosition(
+                        target: _center,
+                        zoom: 11.0,
+                      ),
+                    ),
+                  ),
                   const Divider(
                     thickness: 1.0,
                   ),
@@ -276,7 +295,6 @@ class ExploreScreenState extends State<ExploreScreen> {
       ),
     );
   }
-
   void selectDialog() {
     showDialog(
         context: context,
