@@ -73,6 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                           onPrimary: Colors.white, // foreground
                         ),
                         onPressed: ()  async{
+                          FirebaseAuth.instance.signOut();
                           await signInWithGoogle();
                           setUserinfo();
                           setState(() => _flag = !_flag);
