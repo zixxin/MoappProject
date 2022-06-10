@@ -4,7 +4,9 @@ import 'login.dart';
 import 'makeroom.dart';
 import 'findroom.dart';
 import 'search.dart';
+import 'locations.dart' as locations;
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,19 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+
+class ProImgController extends GetxController {
+  final str = "".obs;
+  final carID = "".obs;
+
+  void changed(final temp) {
+    str.value = temp ;
+  }
+
+  void carNumUpdate(final text) {
+    carID.value = text ;
+  }
+}
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({Key? key, required this.title}) : super(key: key);
@@ -22,12 +37,21 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class ExploreScreenState extends State<ExploreScreen> {
+  final Map<String, Marker> _markers = {};
 
-  File? _image ;
+  late GoogleMapController mapController;
+  final LatLng _center = const LatLng(45.521563, -122.677433);
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  File? _image;
   var _user;
   String imgData = "";
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+
 
   @override
   void initState() {
@@ -37,22 +61,164 @@ class ExploreScreenState extends State<ExploreScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final profileController = Get.put(ProImgController());
     final fb = FirebaseFirestore.instance;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('HOME', style: TextStyle(color: Colors.white),),
-        backgroundColor: const Color(0xFF38597E),
-        elevation: 0.0,
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),
-      body: Center(
-        child: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("profile").snapshots(),
-          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+    Widget profileSection = StreamBuilder(
+        stream: FirebaseFirestore.instance.collection("profile").snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: CircularProgressIndicator(),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 16),
+                  child: Text('Awaiting Page...'),
+                )
+              ],
+            );
+          }
+          if (snapshot.hasError) {
+            print(snapshot.data);
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 60,
+                ),
+                Text(
+                  'Error : data is ${snapshot.data}',
+                ),
+              ],
+            );
+          }
+          if (snapshot.hasData) {
+            for (final urlImg in snapshot.data!.docs) {
+              if (urlImg["userId"] == _firebaseAuth.currentUser!.uid) {
+                imgData = urlImg["imageURL"].toString();
+                profileController.changed(imgData);
+              }
+            }
+          }
+          return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.topLeft,
+                  margin: const EdgeInsets.only(top: 20.0, left: 20.0),
+                  child: const Text('내 프로필', style: TextStyle(fontSize: 15.0)),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(
+                          top: 20.0, left: 30.0, right: 20.0, bottom: 20.0),
+                      width: 70,
+                      height: 70,
+                      decoration: const BoxDecoration(
+                          color: Color(0xFF38597E),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(100)) //모서리를 둥글게
+                          ),
+                      child: IconButton(
+                        icon: (imgData == "")
+                            ? const Icon(Icons.person)
+                            : CircleAvatar(backgroundImage: NetworkImage(imgData), radius: 40,backgroundColor: Colors.transparent,),
+                        color: Colors.white,
+                        iconSize: 45.0,
+                        onPressed: () => selectDialog(),
+                      ),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 20.0, bottom: 5.0),
+                          child: Text(
+                            name_user,
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 20.0),
+                          child: const Text(
+                            '자주타는 동네 : 한동대',
+                            textAlign: TextAlign.start,
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ]);
+        });
 
-            if(snapshot.connectionState == ConnectionState.waiting) {
+    Widget makeRoomSection = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(top: 10.0, left: 20.0, bottom: 10.0),
+          width: 170,
+          height: 40,
+          decoration: const BoxDecoration(
+              color: Color(0xFF98C9FF),
+              borderRadius:
+                  const BorderRadius.all(Radius.circular(10)) //모서리를 둥글게
+              ),
+          child: TextButton(
+              child: const Text("방만들기",
+                  style: TextStyle(fontSize: 15, color: Colors.white)),
+              onPressed: () {
+                Get.to(() => const MakeRoomPage(title: ''));
+              }),
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 10.0, right: 20.0, bottom: 10.0),
+          width: 170,
+          height: 40,
+          decoration: const BoxDecoration(
+              color: Color(0xFF98C9FF),
+              borderRadius:
+                  const BorderRadius.all(Radius.circular(10)) //모서리를 둥글게
+              ),
+          child: TextButton(
+              child: const Text("방찾기",
+                  style: TextStyle(fontSize: 15, color: Colors.white)),
+              onPressed: () {
+                Get.to(() => const SearchPage(title: ''));
+              }),
+        ),
+      ],
+    );
+
+    Widget nearbySection = Column(children: [
+      const Divider(
+        thickness: 1.0,
+      ),
+      Container(
+        alignment: Alignment.topLeft,
+        margin: const EdgeInsets.only(top: 10.0, left: 20.0),
+        child: const Text('근처 곧 마감되는 카풀', style: TextStyle(fontSize: 15.0)),
+      ),
+      StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection("rooms")
+              .orderBy("hour", descending: false)
+              .snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) return Text('Error: ${snapshot.error}');
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
@@ -69,211 +235,158 @@ class ExploreScreenState extends State<ExploreScreen> {
               );
             }
 
-            if(snapshot.hasError) {
-              print(snapshot.data) ;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    color: Colors.red,
-                    size: 60,
-                  ),
-                  Text(
-                    'Error : data is ${snapshot.data}',
-                  ),
-                ],
-              ) ;
-            }
-
-            if(snapshot.hasData) {
-              for(final urlImg in snapshot.data!.docs) {
-                if(urlImg["userId"] == _firebaseAuth.currentUser!.uid) {
-                  imgData = urlImg["imageURL"].toString() ;
-                }
-              }
-            }
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(top: 20.0, left: 20.0),
-                  child: const Text('내 프로필', style: TextStyle(fontSize: 15.0)),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: 20.0, left: 30.0, right: 20.0, bottom: 20.0),
-                      width: 70,
-                      height: 70,
-                      decoration: const BoxDecoration(
-                          color: Color(0xFF38597E),
-                          borderRadius: BorderRadius.all(Radius.circular(100)) //모서리를 둥글게
-                      ),
-                      child: IconButton(
-                        icon: (imgData == "") ? const Icon(Icons.person) : Image.network(imgData),
-                        color: Colors.white,
-                        iconSize: 45.0,
-                        onPressed: () => selectDialog(),
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(top: 20.0, bottom: 5.0),
-                          child: Text(
-                            name_user,
-                            textAlign: TextAlign.start,
-                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 20.0),
-                          child: const Text(
-                            '자주타는 동네 : 한동대',
-                            textAlign: TextAlign.start,
-                            style: TextStyle(fontSize: 15),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: 10.0, left: 20.0, bottom: 10.0),
-                      width: 170,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                          color: Color(0xFF98C9FF),
-                          borderRadius: const BorderRadius.all(Radius.circular(10)) //모서리를 둥글게
-                      ),
-                      child: TextButton(
-                          child: const Text("방만들기", style: TextStyle(fontSize: 15, color: Colors.white)),
-                          onPressed: (){
-                            Get.to(() => const MakeRoomPage(title: ''));
-                          }),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 10.0, right: 20.0, bottom: 10.0),
-                      width: 170,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                          color: Color(0xFF98C9FF),
-                          borderRadius: const BorderRadius.all(Radius.circular(10)) //모서리를 둥글게
-                      ),
-                      child: TextButton(
-                          child: const Text("방찾기", style: TextStyle(fontSize: 15, color: Colors.white)),
-                          onPressed: (){
-                            Get.to(() => const SearchPage(title: ''));
-                          }),
-                    ),
-                  ],
-                ),
-                const Divider(
-                  thickness: 1.0,
-                ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(top: 10.0, left: 20.0),
-                  child: const Text('근처 곧 마감되는 카풀', style: TextStyle(fontSize: 15.0)),
-                ),
-                StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance.collection('rooms').orderBy('hour', descending: false).snapshots(),
-                    builder: (context, snapshot) {
-                      return Container(
-                        height: 110,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          itemCount: 1,
-                          itemBuilder: (ctx, index) => Container(
-                            margin: const EdgeInsets.only(top: 5.0, left: 15.0, right: 5.0),
-                            child: Row(
-                              children: [
-                                DataTable(
-                                  columnSpacing: 40.0,
-                                  columns: const [
-                                    DataColumn(label: Text('출발지', style: TextStyle(fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('목적지', style: TextStyle(fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('출발시간', style: TextStyle(fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('더보기', style: TextStyle(fontWeight: FontWeight.bold))),
-                                  ],
-                                  rows: [
-                                    DataRow(
-                                        cells: [
-                                          DataCell(Container(
-                                            alignment: Alignment.center,
-                                            width: 45,
-                                            height: 40,
-                                            child: Text(
-                                              snapshot.data?.docs[index]['start place'],
-                                              style: const TextStyle(fontSize: 12.0),
-                                              maxLines: 2,
-                                            ),),),
-                                          DataCell(Container(
-                                            alignment: Alignment.center,
-                                            width: 45,
-                                            height: 40,
-                                            child: Text(
-                                              snapshot.data?.docs[index]['finish place'],
-                                              style: const TextStyle(fontSize: 12.0),
-                                              maxLines: 2,
-                                            ),),),
-                                          DataCell(Container(
-                                            alignment: Alignment.center,
-                                            width: 45,
-                                            height: 40,
-                                            child: Text(
-                                              '${snapshot.data?.docs[index]['hour']}:${snapshot.data?.docs[index]['minute']}',
-                                              style: const TextStyle(fontSize: 12.0),
-                                              maxLines: 1,
-                                            ),),),
-                                          DataCell(Container(
-                                            width: 55,
-                                            height: 40,
-                                            child: OutlinedButton(
-                                              style: OutlinedButton.styleFrom(
-                                                side: const BorderSide(width: 1.0, color: Color(0xFF38597E)),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.pushNamed(context, '/chating',);
-                                              },
-                                              child: const Text("채팅", style: TextStyle(fontSize: 12.0, color: Color(0xFF38597E))),
-                                            ),),),
-                                        ]
-                                    ),
-                                  ],
+            print("@#@#@#@#");
+            print(snapshot.data!.docs);
+            return Container(
+              height: 110,
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                itemCount: 1,//snapshot.data?.docs.length,
+                itemBuilder: (ctx, index) => Container(
+                  margin:
+                      const EdgeInsets.only(top: 5.0, left: 15.0, right: 5.0),
+                  child: Row(
+                    children: [
+                      DataTable(
+                        columnSpacing: 40.0,
+                        columns: const [
+                          DataColumn(
+                              label: Text('출발지',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
+                          DataColumn(
+                              label: Text('목적지',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
+                          DataColumn(
+                              label: Text('출발시간',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
+                          DataColumn(
+                              label: Text('더보기',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
+                        ],
+                        rows: [
+                          DataRow(cells: [
+                            DataCell(
+                              Container(
+                                alignment: Alignment.center,
+                                width: 45,
+                                height: 40,
+                                child: Text(
+                                  snapshot.data!.docs[index]['start place'].toString(),
+                                  style: const TextStyle(fontSize: 12.0),
+                                  maxLines: 2,
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
-                      );
-                    }),
-                const SizedBox(height: 10.0),
-                const Divider(
-                  thickness: 1.0,
+                            DataCell(
+                              Container(
+                                alignment: Alignment.center,
+                                width: 45,
+                                height: 40,
+                                child: Text(
+                                  snapshot.data!.docs[index]['finish place'].toString(),
+                                  style: const TextStyle(fontSize: 12.0),
+                                  maxLines: 2,
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              Container(
+                                alignment: Alignment.center,
+                                width: 45,
+                                height: 40,
+                                child: Text(
+                                  '${snapshot.data!.docs[index]['hour']}:${snapshot.data!.docs[index]['minute']}',
+                                  style: const TextStyle(fontSize: 12.0),
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              Container(
+                                width: 55,
+                                height: 40,
+                                child: OutlinedButton(
+                                  style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(
+                                        width: 1.0, color: Color(0xFF38597E)),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/chating',
+                                    );
+                                  },
+                                  child: const Text("채팅",
+                                      style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: Color(0xFF38597E))),
+                                ),
+                              ),
+                            ),
+                          ]),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(top: 10.0, left: 20.0, bottom: 20.0),
-                  child: const Text('근처 카풀 지도 보기', style: TextStyle(fontSize: 15.0)),
-                ),
-                const Divider(
-                  thickness: 1.0,
-                ),
-              ],
+              ),
             );
-          }
+          }),
+      const SizedBox(height: 10.0),
+      const Divider(
+        thickness: 1.0,
+      )
+    ]);
+
+    Widget mapSection = Column(
+      children: [
+        Container(
+          alignment: Alignment.topLeft,
+          margin: const EdgeInsets.only(top: 10.0, left: 20.0, bottom: 20.0),
+          child: const Text('근처 카풀 지도 보기', style: TextStyle(fontSize: 15.0)),
         ),
+        Container(
+          width: 350.0,
+          height: 200.0,
+          child: GoogleMap(
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: CameraPosition(
+              target: _center,
+              zoom: 11.0,
+            ),
+          ),
+        ),
+        const Divider(
+          thickness: 1.0,
+        ),
+      ],
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'HOME',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: const Color(0xFF38597E),
+        elevation: 0.0,
+        centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
+      body: Center(
+          child: ListView(
+            children: [
+            profileSection,
+            makeRoomSection,
+            nearbySection,
+            mapSection,
+          ],
+      )),
     );
   }
 
@@ -312,7 +425,7 @@ class ExploreScreenState extends State<ExploreScreen> {
               ),
               TextButton(
                 child: const Text("카메라"),
-                onPressed: (){
+                onPressed: () {
                   Navigator.pop(context);
                   _uploadImageToStorage(ImageSource.camera);
                 },
@@ -324,7 +437,7 @@ class ExploreScreenState extends State<ExploreScreen> {
 
   void _prepareService() async {
     _user = FirebaseAuth.instance.currentUser!;
-    if(_user == null) {
+    if (_user == null) {
       print("No login!");
       return;
     }
@@ -333,41 +446,65 @@ class ExploreScreenState extends State<ExploreScreen> {
   Future<String> storeImage() async {
     _user = await _firebaseAuth.currentUser!;
     final response = await _firebaseStorage
-    .ref().child("profile/${_user.uid}").getDownloadURL();
+        .ref()
+        .child("profile/${_user.uid}")
+        .getDownloadURL();
+    print("@######################");
+    return response;
+  }
 
-    return response ;
+  bool needDelExist = false;
+  Future<bool> checkExist() async {
+    try {
+      await FirebaseFirestore.instance.doc(_firebaseAuth.currentUser!.uid).get().then((doc)
+      {
+        needDelExist = doc.exists;
+      });
+      FirebaseFirestore.instance
+          .collection("profile")
+          .doc(_firebaseAuth.currentUser!.uid)
+          .delete();
+      print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@44");
+      return needDelExist ;
+    } catch(e) {
+      return false ;
+    }
   }
 
   Future addImage(final url) async {
-    final findData = await FirebaseFirestore.instance
-        .collection("profile").doc(_firebaseAuth.currentUser!.uid).delete();
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@33");
+    final userInfo = FirebaseFirestore.instance
+        .collection("profile")
+        .doc(_firebaseAuth.currentUser!.uid) ;
 
-    await FirebaseFirestore.instance.collection("profile")
-    .doc(_firebaseAuth.currentUser!.uid).set({
-      'imageURL': url,
-      'name': FirebaseAuth.instance.currentUser!.displayName,
-      'userId': FirebaseAuth.instance.currentUser!.uid,
-      'email': FirebaseAuth.instance.currentUser!.email,
+    userInfo.set({
+        'email': FirebaseAuth.instance.currentUser!.email,
+        'imageURL': url,
+        'name': FirebaseAuth.instance.currentUser!.displayName,
+        'userId': FirebaseAuth.instance.currentUser!.uid,
     });
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@33");
   }
 
   Future<void> _uploadImageToStorage(ImageSource source) async {
     final _picker = ImagePicker();
     final image = await ImagePicker.platform.getImage(source: source);
     //ImagePicker.platform.getImage(source: source);
-
     if (image == null) return;
     setState(() {
       _image = File(image.path);
       print(_image);
     });
-
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     final storageReference =
-    _firebaseStorage.ref().child("profile/${_user.uid}");
-
+        _firebaseStorage.ref().child("profile/${_user.uid}");
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     final storageUploadTask = await storageReference.putFile(_image!);
 
     final response = await storeImage();
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    print(response);
+    checkExist();
     await addImage(response);
   }
 }

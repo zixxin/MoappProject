@@ -21,9 +21,15 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+//if (defaultTargetPlatform == TargetPlatform.android) {
+//    AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
+//}
+
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+// START: FlutterFire Configuration
 apply plugin: 'com.google.gms.google-services'
+// END: FlutterFire Configuration
+apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
@@ -45,11 +51,11 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.temp"
-        minSdkVersion 19
-        targetSdkVersion 30
+        minSdkVersion 21 //flutter.minSdkVersion
+        targetSdkVersion 30 //flutter.targetSdkVersion
+        multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        multiDexEnabled true
     }
 
     buildTypes {
@@ -64,9 +70,13 @@ android {
 flutter {
     source '../..'
 }
-
+configurations.all {
+    resolutionStrategy {
+        force 'com.squareup.okhttp:okhttp:2.7.5'
+        force 'com.squareup.okio:okio:1.17.5'
+    }
+}
 dependencies {
-    implementation platform('com.google.firebase:firebase-bom:30.0.2')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:multidex-instrumentation:1.0.3'
+    implementation "com.android.support:multidex:1.0.3"
 }

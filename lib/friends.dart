@@ -37,55 +37,55 @@ class _FriendsPageState extends State<FriendsPage> {
           child: ListView(
             children: [
               ListTile(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 10.0, left: 10.0, right: 20.0),
-                        width: 55,
-                        height: 55,
-                        decoration: const BoxDecoration(
-                            color: Color(0xFF38597E),
-                            borderRadius: BorderRadius.all(Radius.circular(100)) //모서리를 둥글게
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.person),
-                          color: Colors.white,
-                          iconSize: 30.0,
-                          onPressed: () {
-                          },
-                        ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 10.0, left: 10.0, right: 20.0),
+                      width: 55,
+                      height: 55,
+                      decoration: const BoxDecoration(
+                          color: Color(0xFF38597E),
+                          borderRadius: BorderRadius.all(Radius.circular(100)) //모서리를 둥글게
                       ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(top: 10.0),
-                            child: const Text(
-                              '한동익명녀',
-                              textAlign: TextAlign.start,
-                              style: TextStyle(fontSize: 15),
-                            ),
-                          ),
-                          const Text(
-                            '나와 같이카한 횟수 : 3회',
-                            textAlign: TextAlign.start,
-                            style: TextStyle(fontSize: 15, color: Colors.grey),
-                          ),
-                        ],
+                      child: IconButton(
+                        icon: const Icon(Icons.person),
+                        color: Colors.white,
+                        iconSize: 30.0,
+                        onPressed: () {
+                        },
                       ),
-                    ],
-                  ),
-                  trailing: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(width: 1.0, color: Color(0xFF38597E)),
                     ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/chating',);
-                    },
-                    child: const Text("채팅", style: TextStyle(color: Color(0xFF38597E))),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 10.0),
+                          child: const Text(
+                            '한동익명녀',
+                            textAlign: TextAlign.start,
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ),
+                        const Text(
+                          '나와 같이카한 횟수 : 3회',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(fontSize: 15, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                trailing: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(width: 1.0, color: Color(0xFF38597E)),
                   ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/chating',);
+                  },
+                  child: const Text("채팅", style: TextStyle(color: Color(0xFF38597E))),
+                ),
               ),
               const Divider(
                   indent: 90.0,

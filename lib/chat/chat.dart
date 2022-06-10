@@ -18,7 +18,13 @@ class ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: new Icon(Icons.arrow_back_ios_new_rounded),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pushNamed(context, '/home',);
+          },
+        ),
         title: const Text('나와같이', style: TextStyle(color: Colors.white),),
         backgroundColor: const Color(0xFF38597E),
         elevation: 0.0,
@@ -65,7 +71,7 @@ class ChatScreenState extends State<ChatScreen> {
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
                 margin: const EdgeInsets.only(top: 10.0),
-                child: const Text('한동익명녀', style: TextStyle(fontSize: 13.0)),
+                child: const Text('한동익명남', style: TextStyle(fontSize: 13.0)),
               ),
               Container(
                 margin: const EdgeInsets.only(top: 5.0),

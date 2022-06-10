@@ -37,16 +37,16 @@ class _SearchPageState extends State<SearchPage> {
               color: Colors.grey[50],
               height: 50.0,
               child: DataTable(
-              columnSpacing: 40.0,
-              columns: const [
-                DataColumn(label: Text('출발지', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn(label: Text('목적지', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn(label: Text('출발시간', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn(label: Text('더보기', style: TextStyle(fontWeight: FontWeight.bold))),
+                columnSpacing: 40.0,
+                columns: const [
+                  DataColumn(label: Text('출발지', style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(label: Text('목적지', style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(label: Text('출발시간', style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(label: Text('더보기', style: TextStyle(fontWeight: FontWeight.bold))),
                 ], rows: [],
+              ),
             ),
-            ),
-        preferredSize: const Size.fromHeight(50.0)),
+            preferredSize: const Size.fromHeight(50.0)),
       ),
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance.collection('rooms').orderBy('hour', descending: false).snapshots(),
@@ -108,17 +108,17 @@ class _SearchPageState extends State<SearchPage> {
                                     ),
                                     onPressed: () {
                                       Navigator.pushNamed(context, '/chating',);
-                                      },
+                                    },
                                     child: const Text("채팅", style: TextStyle(fontSize: 12.0, color: Color(0xFF38597E))),
                                   ),),),
                               ]
                           ),
                         ],
                       ),
-                          ],
-                        ),
-                      ),
+                    ],
                   ),
+                ),
+              ),
             );
           }),
     );
