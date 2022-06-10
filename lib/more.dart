@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:temp/explore.dart';
+import 'package:temp/machine.dart';
 import 'mycar.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,6 +22,7 @@ class MoreScreen extends StatefulWidget {
 
 class MoreScreenState extends State<MoreScreen> {
   final _formKey = GlobalKey<FormState>(debugLabel: '_GuestBookState');
+  final profileController = Get.put(ProImgController());
   File? _image ;
   var _user;
   String imgData = "";
@@ -47,11 +50,17 @@ class MoreScreenState extends State<MoreScreen> {
                       borderRadius: BorderRadius.all(Radius.circular(100)) //모서리를 둥글게
                   ),
                   child: IconButton(
-                    icon: const Icon(Icons.person),
+                    icon: Obx( () {
+                      return (profileController.str.value == "")
+                          ? const Icon(Icons.person)
+                          : CircleAvatar(backgroundImage: NetworkImage(profileController.str.value),
+                        radius: 40,
+                        backgroundColor: Colors.transparent);
+                    }
+                    ),
                     color: Colors.white,
                     iconSize: 45.0,
-                    onPressed: () {
-                    },
+                    onPressed: () => {},
                   ),
                 ),
                 Column(
@@ -97,9 +106,18 @@ class MoreScreenState extends State<MoreScreen> {
             Container(
               child: ListTile(
                 title: const Text('차랑 등록 여부', style: TextStyle(fontSize: 15)),
-                trailing: const Text('미등록', style: TextStyle(fontSize: 15, color: Colors.grey)),
+                trailing: Obx(
+                    () {
+                      return profileController.carID.value == "" ?
+                      const Text('미등록', style: TextStyle(fontSize: 15, color: Colors.grey)) :
+                          const Text('등록', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF38597E)));
+                    }
+                ),
                 onTap: () {
-                  Get.to(() => const MyCarScreen(title: ''));
+                  if(profileController.carID.value == "") {
+                    Get.to(() =>
+                    const carInfo(title: '')); //const MyCarScreen(title: ''));
+                  }
                 },
               ),
             ),

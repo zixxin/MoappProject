@@ -15,6 +15,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+class ProImgController extends GetxController {
+  final str = "".obs;
+  final carID = "".obs;
+
+  void changed(final temp) {
+    str.value = temp ;
+  }
+
+  void carNumUpdate(final text) {
+    carID.value = text ;
+  }
+}
+
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -48,6 +61,7 @@ class ExploreScreenState extends State<ExploreScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final profileController = Get.put(ProImgController());
     final fb = FirebaseFirestore.instance;
 
     Widget profileSection = StreamBuilder(
@@ -89,6 +103,7 @@ class ExploreScreenState extends State<ExploreScreen> {
             for (final urlImg in snapshot.data!.docs) {
               if (urlImg["userId"] == _firebaseAuth.currentUser!.uid) {
                 imgData = urlImg["imageURL"].toString();
+                profileController.changed(imgData);
               }
             }
           }
@@ -116,7 +131,7 @@ class ExploreScreenState extends State<ExploreScreen> {
                       child: IconButton(
                         icon: (imgData == "")
                             ? const Icon(Icons.person)
-                            : Image.network(imgData),
+                            : CircleAvatar(backgroundImage: NetworkImage(imgData), radius: 40,backgroundColor: Colors.transparent,),
                         color: Colors.white,
                         iconSize: 45.0,
                         onPressed: () => selectDialog(),
@@ -204,6 +219,20 @@ class ExploreScreenState extends State<ExploreScreen> {
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) return Text('Error: ${snapshot.error}');
             if (snapshot.connectionState == ConnectionState.waiting) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: CircularProgressIndicator(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Text('Awaiting Page...'),
+                  )
+                ],
+              );
             }
 
             print("@#@#@#@#");
