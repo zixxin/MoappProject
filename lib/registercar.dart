@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegisterCarScreen extends StatefulWidget {
   const RegisterCarScreen({Key? key, required this.title}) : super(key: key);
@@ -248,10 +252,12 @@ class SwitchWidget extends StatefulWidget {
 
 class SwitchWidgetClass extends State {
   bool switchControl = false;
+  File? _image;
 
   void toggleSwitch(bool value) {
     if (switchControl == false) {
       setState(() {
+        _uploadImageToStorage(ImageSource.gallery);
         switchControl = true;
 
       });
@@ -278,5 +284,50 @@ class SwitchWidgetClass extends State {
                 inactiveTrackColor: Colors.grey[350],
               )),
         ]);
+  }
+
+  Future<void> _uploadImageToStorage(ImageSource source) async {
+    final _picker = ImagePicker();
+    final image = await ImagePicker.platform.getImage(source: source);
+    //ImagePicker.platform.getImage(source: source);
+
+    if (image == null) return;
+    setState(() {
+      _image = File(image.path);
+      print(_image);
+    });
+
+    final InputImage inputImage = InputImage.fromFilePath(image.path);
+    final textRecognizer = TextRecognizer(script: TextRecognitionScript.korean);
+
+    final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
+
+    String text = recognizedText.text;
+    for (TextBlock block in recognizedText.blocks) {
+      final Rect rect = block.boundingBox; // block.rect
+      final List<Offset> cornerPoints = block.cornerPoints.cast<Offset>();
+      final String text = block.text;
+      print(text + "@@@@@@@@@@@@@@@@");
+      final List<String> languages = block.recognizedLanguages;
+
+      for (TextLine line in block.lines) {
+        final Rect rect = block.boundingBox; // block.rect
+        final List<Offset> cornerPoints = block.cornerPoints.cast<Offset>();
+        final String text = block.text;
+
+        final List<String> languages = block.recognizedLanguages;
+        // Same getters as TextBlock
+        for (TextElement element in line.elements) {
+          // Same getters as TextBlock
+        }
+      }
+    }
+    // final storageReference =
+    // _firebaseStorage.ref().child("profile/${_user.uid}");
+    // print("씨발 모르겠다!!!!!!!!\n");
+    // final storageUploadTask = await storageReference.putFile(_image!);
+    //
+    // final response = await storeImage();
+    // await addImage(response);
   }
 }
